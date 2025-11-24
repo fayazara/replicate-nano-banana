@@ -14,7 +14,6 @@
     "@iconify-json/lucide": "^1.2.74",
     "@iconify-json/simple-icons": "^1.2.59",
     "@nuxt/ui": "^4.2.1",
-    "@vueuse/nuxt": "14.0.0",
     "nuxt": "^4.2.1",
     "replicate": "^1.4.0",
     "vue": "^3.5.23"

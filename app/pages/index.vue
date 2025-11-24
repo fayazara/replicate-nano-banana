@@ -13,12 +13,11 @@
     <UButton
       :loading="loading"
       :disabled="!image || !title"
-      @click="generateThumbnail"
       block
+      label="Generate Thumbnail"
       size="lg"
-    >
-      Generate Thumbnail
-    </UButton>
+      @click="generateThumbnail"
+    />
 
     <div v-if="result" class="mt-4">
       <img :src="result" alt="Generated Thumbnail" class="w-full rounded-lg" />
@@ -45,19 +44,21 @@ const generateThumbnail = async () => {
 
   loading.value = true
   try {
-    const reader = new FileReader()
-    reader.readAsDataURL(image.value)
-    reader.onload = async () => {
-      const base64Image = reader.result
-      const data = await $fetch('/api/generate', {
-        method: 'POST',
-        body: {
-          image: base64Image,
-          title: title.value
-        }
-      })
-      result.value = data as string
-    }
+    const base64Image = await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = () => resolve(reader.result as string)
+      reader.onerror = reject
+      reader.readAsDataURL(image.value!)
+    })
+
+    const data = await $fetch('/api/generate', {
+      method: 'POST',
+      body: {
+        image: base64Image,
+        title: title.value
+      }
+    })
+    result.value = data as string
   } catch (error) {
     console.error(error)
     alert('Failed to generate thumbnail')
