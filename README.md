@@ -1,60 +1,32 @@
-# Nuxt Starter Template
+# YouTube Thumbnail Generator
 
-[![Nuxt UI](https://img.shields.io/badge/Made%20with-Nuxt%20UI-00DC82?logo=nuxt&labelColor=020420)](https://ui.nuxt.com)
+A simple app to generate YouTube thumbnails using the `google/nano-banana-pro` model.
 
-Use this template to get started with [Nuxt UI](https://ui.nuxt.com) quickly.
+## Tech Stack
 
-- [Live demo](https://starter-template.nuxt.dev/)
-- [Documentation](https://ui.nuxt.com/docs/getting-started/installation/nuxt)
-
-<a href="https://starter-template.nuxt.dev/" target="_blank">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://ui.nuxt.com/assets/templates/nuxt/starter-dark.png">
-    <source media="(prefers-color-scheme: light)" srcset="https://ui.nuxt.com/assets/templates/nuxt/starter-light.png">
-    <img alt="Nuxt Starter Template" src="https://ui.nuxt.com/assets/templates/nuxt/starter-light.png">
-  </picture>
-</a>
-
-> The starter template for Vue is on https://github.com/nuxt-ui-templates/starter-vue.
-
-## Quick Start
-
-```bash [Terminal]
-npm create nuxt@latest -- -t github:nuxt-ui-templates/starter
-```
-
-## Deploy your own
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-name=starter&repository-url=https%3A%2F%2Fgithub.com%2Fnuxt-ui-templates%2Fstarter&demo-image=https%3A%2F%2Fui.nuxt.com%2Fassets%2Ftemplates%2Fnuxt%2Fstarter-dark.png&demo-url=https%3A%2F%2Fstarter-template.nuxt.dev%2F&demo-title=Nuxt%20Starter%20Template&demo-description=A%20minimal%20template%20to%20get%20started%20with%20Nuxt%20UI.)
+- **Framework**: Nuxt
+- **Deployment**: Cloudflare Workers
+- **AI Provider**: Replicate (`google/nano-banana-pro`)
 
 ## Setup
 
-Make sure to install the dependencies:
+1.  Clone the repository.
+2.  Install dependencies:
 
-```bash
-pnpm install
-```
+    ```bash
+    npm install
+    ```
 
-## Development Server
+3.  Create a `.env` file and add your Replicate API token:
 
-Start the development server on `http://localhost:3000`:
+    ```bash
+    REPLICATE_API_TOKEN=your_token_here
+    ```
 
-```bash
-pnpm dev
-```
+4.  Start the development server:
 
-## Production
+    ```bash
+    npm run dev
+    ```
 
-Build the application for production:
-
-```bash
-pnpm build
-```
-
-Locally preview production build:
-
-```bash
-pnpm preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+5.  Open `http://localhost:3000` in your browser.

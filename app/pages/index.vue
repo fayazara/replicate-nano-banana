@@ -1,76 +1,68 @@
 <template>
-  <div>
-    <UPageHero
-      title="Nuxt Starter Template"
-      description="A production-ready starter template powered by Nuxt UI. Build beautiful, accessible, and performant applications in minutes, not hours."
-      :links="[{
-        label: 'Get started',
-        to: 'https://ui.nuxt.com/docs/getting-started/installation/nuxt',
-        target: '_blank',
-        trailingIcon: 'i-lucide-arrow-right',
-        size: 'xl'
-      }, {
-        label: 'Use this template',
-        to: 'https://github.com/nuxt-ui-templates/starter',
-        target: '_blank',
-        icon: 'i-simple-icons-github',
-        size: 'xl',
-        color: 'neutral',
-        variant: 'subtle'
-      }]"
+  <UContainer class="relative min-h-screen max-w-xl space-y-4 py-12">
+    <h1 class="text-center font-bold">Youtube Thumbnail Generator</h1>
+    <UFileUpload
+      v-model="image"
+      class="min-h-48"
+      accept="image/jpeg, image/png"
+      label="Drop your picture here"
+      description="PNG or JPG"
+      layout="list"
     />
+    <UInput v-model="title" placeholder="Title" class="w-full" size="lg" />
+    <UButton
+      :loading="loading"
+      :disabled="!image || !title"
+      @click="generateThumbnail"
+      block
+      size="lg"
+    >
+      Generate Thumbnail
+    </UButton>
 
-    <UPageSection
-      id="features"
-      title="Everything you need to build modern Nuxt apps"
-      description="Start with a solid foundation. This template includes all the essentials for building production-ready applications with Nuxt UI's powerful component system."
-      :features="[{
-        icon: 'i-lucide-rocket',
-        title: 'Production-ready from day one',
-        description: 'Pre-configured with TypeScript, ESLint, Tailwind CSS, and all the best practices. Focus on building features, not setting up tooling.'
-      }, {
-        icon: 'i-lucide-palette',
-        title: 'Beautiful by default',
-        description: 'Leveraging Nuxt UI\'s design system with automatic dark mode, consistent spacing, and polished components that look great out of the box.'
-      }, {
-        icon: 'i-lucide-zap',
-        title: 'Lightning fast',
-        description: 'Optimized for performance with SSR/SSG support, automatic code splitting, and edge-ready deployment. Your users will love the speed.'
-      }, {
-        icon: 'i-lucide-blocks',
-        title: '100+ components included',
-        description: 'Access Nuxt UI\'s comprehensive component library. From forms to navigation, everything is accessible, responsive, and customizable.'
-      }, {
-        icon: 'i-lucide-code-2',
-        title: 'Developer experience first',
-        description: 'Auto-imports, hot module replacement, and TypeScript support. Write less boilerplate and ship more features.'
-      }, {
-        icon: 'i-lucide-shield-check',
-        title: 'Built for scale',
-        description: 'Enterprise-ready architecture with proper error handling, SEO optimization, and security best practices built-in.'
-      }]"
-    />
-
-    <UPageSection>
-      <UPageCTA
-        title="Ready to build your next Nuxt app?"
-        description="Join thousands of developers building with Nuxt and Nuxt UI. Get this template and start shipping today."
-        variant="subtle"
-        :links="[{
-          label: 'Start building',
-          to: 'https://ui.nuxt.com/docs/getting-started/installation/nuxt',
-          target: '_blank',
-          trailingIcon: 'i-lucide-arrow-right',
-          color: 'neutral'
-        }, {
-          label: 'View on GitHub',
-          to: 'https://github.com/nuxt-ui-templates/starter',
-          target: '_blank',
-          icon: 'i-simple-icons-github',
-          color: 'neutral',
-          variant: 'outline'
-        }]"
-      />
-    </UPageSection>
-  </div>
+    <div v-if="result" class="mt-4">
+      <img :src="result" alt="Generated Thumbnail" class="w-full rounded-lg" />
+    </div>
+    <div
+      class="text-muted absolute bottom-0 flex h-12 w-full items-center justify-center text-sm"
+    >
+      <p>
+        Made with Cloudflare Workers and Replicate by
+        <a href="https://twitter.com/fayazara">@fayazara</a>
+      </p>
+    </div>
+  </UContainer>
 </template>
+
+<script lang="ts" setup>
+const image = ref<File | null>(null)
+const title = ref('')
+const loading = ref(false)
+const result = ref('')
+
+const generateThumbnail = async () => {
+  if (!image.value || !title.value) return
+
+  loading.value = true
+  try {
+    const reader = new FileReader()
+    reader.readAsDataURL(image.value)
+    reader.onload = async () => {
+      const base64Image = reader.result
+      const data = await $fetch('/api/generate', {
+        method: 'POST',
+        body: {
+          image: base64Image,
+          title: title.value
+        }
+      })
+      result.value = data as string
+    }
+  } catch (error) {
+    console.error(error)
+    alert('Failed to generate thumbnail')
+  } finally {
+    loading.value = false
+  }
+}
+</script>

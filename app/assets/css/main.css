@@ -1,18 +1,38 @@
-@import "tailwindcss";
-@import "@nuxt/ui";
+@import 'tailwindcss';
+@import '@nuxt/ui';
 
 @theme static {
-  --font-sans: 'Public Sans', sans-serif;
+  --font-sans: 'Inter', sans-serif;
+}
 
-  --color-green-50: #EFFDF5;
-  --color-green-100: #D9FBE8;
-  --color-green-200: #B3F5D1;
-  --color-green-300: #75EDAE;
-  --color-green-400: #00DC82;
-  --color-green-500: #00C16A;
-  --color-green-600: #00A155;
-  --color-green-700: #007F45;
-  --color-green-800: #016538;
-  --color-green-900: #0A5331;
-  --color-green-950: #052E16;
+* {
+  scrollbar-color: var(--ui-bg-accented) transparent;
+  scrollbar-width: thin;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.divide-dimmed {
+  @apply divide-neutral-100 dark:divide-white/5;
+}
+
+.border-dimmed {
+  @apply border-neutral-100 dark:border-white/5;
+}
+
+.outline-dimmed {
+  @apply outline-neutral-100 dark:outline-white/5;
+}
+
+:root {
+  --ui-primary: black;
+  --ui-radius: 0.375rem;
+  --ui-header-height: calc(var(--spacing) * 14);
+  --ui-warning: var(--ui-color-warning-600);
+  --ui-success: var(--ui-color-success-600);
+}
+
+.dark {
+  --ui-primary: white;
+  --ui-warning: var(--ui-color-warning-400);
+  --ui-success: var(--ui-color-success-400);
 }
