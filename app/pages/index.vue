@@ -3,11 +3,10 @@
     <h1 class="text-center font-bold">Youtube Thumbnail Generator</h1>
     <UFileUpload
       v-model="image"
-      class="min-h-40"
       accept="image/jpeg, image/png"
-      label="Drop your picture here"
-      description="PNG or JPG"
       layout="list"
+      label="Drop your picture here"
+      position="inside"
     />
     <UInput v-model="title" placeholder="Title" class="w-full" size="lg" />
     <div class="grid grid-cols-3 gap-4">
@@ -67,17 +66,22 @@
       <UAlert
         :color="
           statusMessage.type === 'error'
-            ? 'red'
+            ? 'error'
             : statusMessage.type === 'success'
-              ? 'green'
-              : 'blue'
+              ? 'success'
+              : 'info'
         "
         :title="statusMessage.title"
         :description="statusMessage.description"
       />
     </div>
-    <div v-if="loading" class="relative mt-4 h-64 w-full overflow-hidden rounded-lg">
-      <DitheredAnimation />
+    <div
+      v-if="loading"
+      class="relative mt-4 h-64 w-full overflow-hidden rounded-lg"
+    >
+      <ClientOnly>
+        <DitheredAnimation />
+      </ClientOnly>
     </div>
     <div v-if="result" class="relative mt-4">
       <img :src="result" alt="Generated Thumbnail" class="w-full rounded-lg" />
