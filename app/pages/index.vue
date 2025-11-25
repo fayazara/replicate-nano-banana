@@ -20,9 +20,9 @@
         <img
           src="/pointing-finger.jpg"
           alt="Pointing Finger"
-          class="h-40 w-full rounded-lg object-cover"
+          class="h-24 w-full rounded-lg object-cover sm:h-40"
         />
-        <p class="my-1 text-xs">Pointing Finger</p>
+        <p class="my-1 text-xs">Pointing Text</p>
       </UButton>
       <UButton
         @click="style = 'surprised'"
@@ -34,7 +34,7 @@
         <img
           src="/surprised.jpg"
           alt="surprised with hands on cheeks"
-          class="h-40 w-full rounded-lg object-cover"
+          class="h-24 w-full rounded-lg object-cover sm:h-40"
         />
         <p class="my-1 text-xs">Surprised</p>
       </UButton>
@@ -48,7 +48,7 @@
         <img
           src="/disappointed.jpg"
           alt="disappointed with a thumbs down"
-          class="h-40 w-full rounded-lg object-cover"
+          class="h-24 w-full rounded-lg object-cover sm:h-40"
         />
         <p class="my-1 text-xs">Disappointed</p>
       </UButton>
@@ -62,19 +62,6 @@
       @click="generateThumbnail"
     />
 
-    <div v-if="statusMessage" class="mt-4">
-      <UAlert
-        :color="
-          statusMessage.type === 'error'
-            ? 'error'
-            : statusMessage.type === 'success'
-              ? 'success'
-              : 'info'
-        "
-        :title="statusMessage.title"
-        :description="statusMessage.description"
-      />
-    </div>
     <div
       v-if="loading"
       class="relative mt-4 h-64 w-full overflow-hidden rounded-lg"
@@ -108,12 +95,7 @@ const title = ref('')
 const loading = ref(false)
 const style = ref('pointing-finger')
 const result = ref('')
-const statusMessage = ref<{
-  type: 'warning' | 'success' | 'error'
-  title: string
-  description?: string
-} | null>(null)
-
+const toast = useToast()
 const pollStatus = async (predictionId: string) => {
   const maxAttempts = 60 // Poll for up to 5 minutes (60 * 5 seconds)
   let attempts = 0
@@ -134,40 +116,30 @@ const pollStatus = async (predictionId: string) => {
           : status.output
         if (outputUrl) {
           result.value = outputUrl
-          statusMessage.value = {
-            type: 'success',
-            title: 'Thumbnail generated successfully!',
-            description: 'Your thumbnail is ready.'
-          }
           loading.value = false
           return
         }
       } else if (status.status === 'failed' || status.status === 'canceled') {
-        statusMessage.value = {
-          type: 'error',
+        toast.add({
           title: 'Generation failed',
           description:
-            status.error || 'The thumbnail generation failed. Please try again.'
-        }
+            status.error || 'The thumbnail generation failed. Please try again.',
+          icon: 'i-lucide-circle-alert'
+        })
         loading.value = false
         return
       } else if (
         status.status === 'processing' ||
         status.status === 'starting'
       ) {
-        statusMessage.value = {
-          type: 'warning',
-          title: 'Generating thumbnail...',
-          description: 'This may take 20-30 seconds. Please wait.'
-        }
         attempts++
         if (attempts >= maxAttempts) {
-          statusMessage.value = {
-            type: 'error',
+          toast.add({
             title: 'Timeout',
             description:
-              'The generation is taking longer than expected. Please try again.'
-          }
+              'The generation is taking longer than expected. Please try again.',
+            icon: 'i-lucide-circle-alert'
+          })
           loading.value = false
           return
         }
@@ -175,11 +147,11 @@ const pollStatus = async (predictionId: string) => {
       }
     } catch (error) {
       console.error('Error polling status:', error)
-      statusMessage.value = {
-        type: 'error',
+      toast.add({
         title: 'Error checking status',
-        description: 'Failed to check generation status. Please try again.'
-      }
+        description: 'Failed to check generation status. Please try again.',
+        icon: 'i-lucide-circle-alert'
+      })
       loading.value = false
     }
   }
@@ -191,11 +163,6 @@ const generateThumbnail = async () => {
 
   loading.value = true
   result.value = ''
-  statusMessage.value = {
-    type: 'warning',
-    title: 'Starting generation...',
-    description: 'Creating your thumbnail request.'
-  }
 
   try {
     const base64Image = await new Promise<string>((resolve, reject) => {
@@ -218,14 +185,14 @@ const generateThumbnail = async () => {
     await pollStatus(data.id)
   } catch (error: any) {
     console.error(error)
-    statusMessage.value = {
-      type: 'error',
+    toast.add({
       title: 'Failed to generate thumbnail',
       description:
         error?.data?.message ||
         error?.message ||
-        'An error occurred. Please try again.'
-    }
+        'An error occurred. Please try again.',
+      icon: 'i-lucide-circle-alert'
+    })
     loading.value = false
   }
 }
