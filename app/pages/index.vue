@@ -76,6 +76,9 @@
         :description="statusMessage.description"
       />
     </div>
+    <div v-if="loading" class="relative mt-4 h-64 w-full overflow-hidden rounded-lg">
+      <DitheredAnimation />
+    </div>
     <div v-if="result" class="relative mt-4">
       <img :src="result" alt="Generated Thumbnail" class="w-full rounded-lg" />
       <UButton
