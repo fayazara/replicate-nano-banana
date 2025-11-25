@@ -1,6 +1,33 @@
 import Replicate from 'replicate'
 
 export default defineEventHandler(async event => {
+  // Rate limiting: 3 creations per IP per day
+  // Only apply in production (Cloudflare environment)
+  const { cloudflare } = event.context
+  if (cloudflare?.env?.THUMBNAIL_RATE_LIMITER) {
+    // Get IP address from Cloudflare headers
+    const ipAddress =
+      event.headers.get('cf-connecting-ip') ||
+      event.headers.get('x-forwarded-for')?.split(',')[0] ||
+      'unknown'
+
+    // Create a date-based key (YYYY-MM-DD) to reset daily
+    const today = new Date().toISOString().split('T')[0]
+    const rateLimitKey = `${ipAddress}:${today}`
+
+    const { success } = await cloudflare.env.THUMBNAIL_RATE_LIMITER.limit({
+      key: rateLimitKey
+    })
+
+    if (!success) {
+      throw createError({
+        statusCode: 429,
+        statusMessage:
+          'Rate limit exceeded. You can create up to 3 thumbnails per day.'
+      })
+    }
+  }
+
   const replicate = new Replicate({
     auth: useRuntimeConfig(event).REPLICATE_API_TOKEN
   })

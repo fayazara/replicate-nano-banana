@@ -1,3 +1,13 @@
 {
-  "compatibility_date": "2025-01-15"
+  "compatibility_date": "2025-01-15",
+  "ratelimits": [
+    {
+      "name": "THUMBNAIL_RATE_LIMITER",
+      "namespace_id": "1001",
+      "simple": {
+        "limit": 3,
+        "period": 60
+      }
+    }
+  ]
 }
