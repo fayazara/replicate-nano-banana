@@ -69,4 +69,4 @@ The app is configured for Cloudflare Workers deployment. Make sure to:
 1. Set environment variables in Cloudflare dashboard or via `wrangler secret put`
 2. Configure `WEBHOOK_HOST` for your production domain
 3. Set up KV namespace for rate limiting (see above)
-4. Build and deploy using Wrangler or Cloudflare Pages
+4. Build and deploy using Wrangler or Cloudflare Workers
