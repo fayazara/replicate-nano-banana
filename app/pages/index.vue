@@ -79,11 +79,22 @@
       />
     </div>
     <div
-      class="text-muted absolute bottom-0 flex h-12 w-full items-center justify-center text-sm"
+      class="text-muted absolute bottom-0 left-0 flex h-12 w-full items-center justify-center text-sm"
     >
-      <p>
+      <p class="text-center">
         Made with Cloudflare Workers and Replicate by
-        <a href="https://twitter.com/fayazara">@fayazara</a>
+        <a
+          target="_blank"
+          class="text-default font-medium"
+          href="https://twitter.com/fayazara"
+          >@fayazara</a
+        >, find the code on
+        <a
+          target="_blank"
+          class="text-default font-medium"
+          href="https://github.com/fayazara/replicate-nano-banana"
+          >GitHub</a
+        >
       </p>
     </div>
   </UContainer>
@@ -123,7 +134,8 @@ const pollStatus = async (predictionId: string) => {
         toast.add({
           title: 'Generation failed',
           description:
-            status.error || 'The thumbnail generation failed. Please try again.',
+            status.error ||
+            'The thumbnail generation failed. Please try again.',
           icon: 'i-lucide-circle-alert'
         })
         loading.value = false
