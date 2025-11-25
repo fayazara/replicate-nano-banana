@@ -44,6 +44,13 @@ async function checkRateLimit(
   })
 }
 
+async function incrementTotalGenerations(kv: any): Promise<void> {
+  const totalKey = 'total_generations'
+  const currentTotal = await kv.get(totalKey)
+  const newTotal = currentTotal ? parseInt(currentTotal, 10) + 1 : 1
+  await kv.put(totalKey, newTotal.toString())
+}
+
 function generatePrompt(title: string, style?: string): string {
   const basePrompt = `Make a youtube thumbnail using this person`
   const commonSuffix = `White silhouette border around the persons headshot. Add cloudflare logo.\n\nSimple modern background`
@@ -124,6 +131,11 @@ export default defineEventHandler(async event => {
       statusCode: 500,
       statusMessage: (prediction.error as string) || 'Failed to create prediction'
     })
+  }
+  
+  // Increment total generations counter after successful creation
+  if (cloudflare?.env?.THUMBNAIL_RATE_LIMIT_KV) {
+    await incrementTotalGenerations(cloudflare.env.THUMBNAIL_RATE_LIMIT_KV)
   }
   
   return {

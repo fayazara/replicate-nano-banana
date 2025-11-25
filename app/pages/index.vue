@@ -1,6 +1,12 @@
 <template>
   <UContainer class="relative min-h-screen max-w-2xl space-y-4 py-12">
-    <h1 class="text-center font-bold">Youtube Thumbnail Generator</h1>
+    <div class="space-y-2">
+      <h1 class="text-center font-bold">Youtube Thumbnail Generator</h1>
+      <div class="text-center text-sm text-muted">
+        <span class="font-semibold">{{ totalGenerations.toLocaleString() }}</span>
+        <span class="ml-1">thumbnails generated</span>
+      </div>
+    </div>
     <UFileUpload
       v-model="image"
       accept="image/jpeg, image/png"
@@ -107,6 +113,28 @@ const loading = ref(false)
 const style = ref('pointing-finger')
 const result = ref('')
 const toast = useToast()
+const totalGenerations = ref(0)
+
+// Fetch total generations count
+const { data: stats } = await useFetch<{ total: number }>('/api/stats', {
+  server: false
+})
+
+if (stats.value) {
+  totalGenerations.value = stats.value.total
+}
+
+// Refresh count after successful generation
+const refreshStats = async () => {
+  try {
+    const stats = await $fetch<{ total: number }>('/api/stats')
+    if (stats) {
+      totalGenerations.value = stats.total
+    }
+  } catch (error) {
+    console.error('Failed to fetch stats:', error)
+  }
+}
 const pollStatus = async (predictionId: string) => {
   const maxAttempts = 60 // Poll for up to 5 minutes (60 * 5 seconds)
   let attempts = 0
@@ -128,6 +156,8 @@ const pollStatus = async (predictionId: string) => {
         if (outputUrl) {
           result.value = outputUrl
           loading.value = false
+          // Refresh stats after successful generation
+          await refreshStats()
           return
         }
       } else if (status.status === 'failed' || status.status === 'canceled') {
