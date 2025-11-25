@@ -1,13 +1,10 @@
 {
   "compatibility_date": "2025-01-15",
-  "ratelimits": [
+  "kv_namespaces": [
     {
-      "name": "THUMBNAIL_RATE_LIMITER",
-      "namespace_id": "1001",
-      "simple": {
-        "limit": 3,
-        "period": 60
-      }
+      "binding": "THUMBNAIL_RATE_LIMIT_KV",
+      "id": "28498f1bbb5d4680b6a6d313e937b5f4",
+      "preview_id": "a8472251035d4d93bde1da3265345ffc"
     }
   ]
 }

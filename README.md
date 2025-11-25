@@ -48,10 +48,25 @@ A simple app to generate YouTube thumbnails using the `google/nano-banana-pro` m
 - `POST /api/webhooks` - Receives webhook notifications from Replicate
 - `GET /api/status/[id]` - Checks the status of a prediction by ID
 
+## Rate Limiting
+
+The app implements rate limiting of 3 thumbnail generations per IP address per day using Cloudflare KV storage.
+
+### Setting up KV for Rate Limiting
+
+The KV namespace `THUMBNAIL_RATE_LIMIT_KV` has been created and configured in `wrangler.json`. The rate limiting will automatically work in production. In local development, rate limiting is skipped if KV is not available.
+
+If you need to recreate the KV namespace:
+```bash
+wrangler kv namespace create THUMBNAIL_RATE_LIMIT_KV
+wrangler kv namespace create THUMBNAIL_RATE_LIMIT_KV --preview
+```
+
 ## Deployment
 
 The app is configured for Cloudflare Workers deployment. Make sure to:
 
 1. Set environment variables in Cloudflare dashboard or via `wrangler secret put`
 2. Configure `WEBHOOK_HOST` for your production domain
-3. Build and deploy using Wrangler or Cloudflare Pages
+3. Set up KV namespace for rate limiting (see above)
+4. Build and deploy using Wrangler or Cloudflare Pages
