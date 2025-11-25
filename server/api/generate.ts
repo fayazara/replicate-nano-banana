@@ -6,7 +6,7 @@ export default defineEventHandler(async event => {
   })
 
   const body = await readBody(event)
-  const { image, title } = body
+  const { image, title, style } = body
 
   if (!image || !title) {
     throw createError({
@@ -15,8 +15,24 @@ export default defineEventHandler(async event => {
     })
   }
 
+  let prompt = ''
+
+  switch (style) {
+    case 'pointing-finger':
+      prompt = `Make a youtube thumbnail using this person pointing towards text "${title}" White silhouette border around the persons headshot. Add cloudflare logo.\n\nSimple modern background`
+      break
+    case 'surprised':
+      prompt = `Make a youtube thumbnail using this person with a surprised expression looking at text "${title}" White silhouette border around the persons headshot. Add cloudflare logo.\n\nSimple modern background`
+      break
+    case 'disappointed':
+      prompt = `Make a youtube thumbnail using this person with a disappointed expression looking at text "${title}" White silhouette border around the persons headshot. Add cloudflare logo.\n\nSimple modern background`
+      break
+    default:
+      prompt = `Make a youtube thumbnail using this person pointing towards text "${title}" White silhouette border around the persons headshot. Add cloudflare logo.\n\nSimple modern background`
+  }
+
   const input = {
-    prompt: `Make a youtube thumbnail using this person pointing towards text "${title}" White silhouette border around the persons headshot. Add cloudflare logo.\n\nSimple modern background`,
+    prompt,
     resolution: '1K',
     image_input: [image],
     aspect_ratio: '16:9',

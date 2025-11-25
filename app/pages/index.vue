@@ -1,5 +1,5 @@
 <template>
-  <UContainer class="relative min-h-screen max-w-xl space-y-4 py-12">
+  <UContainer class="relative min-h-screen max-w-3xl space-y-4 py-12">
     <h1 class="text-center font-bold">Youtube Thumbnail Generator</h1>
     <UFileUpload
       v-model="image"
@@ -10,6 +10,62 @@
       layout="list"
     />
     <UInput v-model="title" placeholder="Title" class="w-full" size="lg" />
+    <div class="grid grid-cols-3 gap-4">
+      <UButton
+        @click="style = 'pointing-finger'"
+        :variant="style === 'pointing-finger' ? 'solid' : 'soft'"
+        square
+        class="flex flex-col"
+      >
+        <img
+          src="/pointing-finger.jpg"
+          alt="Pointing Finger"
+          class="h-48 w-full rounded object-cover"
+        />
+        <p
+          class="my-1 text-xs"
+          :class="style === 'pointing-finger' ? 'text-white' : 'text-muted'"
+        >
+          Pointing Finger
+        </p>
+      </UButton>
+      <UButton
+        @click="style = 'surprised'"
+        :variant="style === 'surprised' ? 'solid' : 'soft'"
+        square
+        class="flex flex-col"
+      >
+        <img
+          src="/surprised.jpg"
+          alt="surprised with hands on cheeks"
+          class="h-48 w-full rounded object-cover"
+        />
+        <p
+          class="my-1 text-xs"
+          :class="style === 'surprised' ? 'text-white' : 'text-muted'"
+        >
+          Surprised
+        </p>
+      </UButton>
+      <UButton
+        @click="style = 'disappointed'"
+        :variant="style === 'disappointed' ? 'solid' : 'soft'"
+        square
+        class="flex flex-col"
+      >
+        <img
+          src="/disappointed.jpg"
+          alt="disappointed with a thumbs down"
+          class="h-48 w-full rounded object-cover"
+        />
+        <p
+          class="my-1 text-xs"
+          :class="style === 'disappointed' ? 'text-white' : 'text-muted'"
+        >
+          Disappointed
+        </p>
+      </UButton>
+    </div>
     <UButton
       :loading="loading"
       :disabled="!image || !title"
@@ -37,6 +93,7 @@
 const image = ref<File | null>(null)
 const title = ref('')
 const loading = ref(false)
+const style = ref('pointing-finger')
 const result = ref('')
 
 const generateThumbnail = async () => {
@@ -55,7 +112,8 @@ const generateThumbnail = async () => {
       method: 'POST',
       body: {
         image: base64Image,
-        title: title.value
+        title: title.value,
+        style: style.value
       }
     })
     result.value = data as string
