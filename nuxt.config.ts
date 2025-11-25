@@ -20,5 +20,12 @@ export default defineNuxtConfig({
     server: {
       allowedHosts: [process.env.WEBHOOK_HOST || '']
     }
+  },
+  nitro: {
+    preset: 'cloudflare_module',
+    cloudflare: {
+      deployConfig: true,
+      nodeCompat: true
+    }
   }
 })
