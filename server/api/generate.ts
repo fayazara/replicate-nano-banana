@@ -2,7 +2,7 @@ import Replicate from 'replicate'
 
 export default defineEventHandler(async event => {
   const replicate = new Replicate({
-    auth: useRuntimeConfig().REPLICATE_API_TOKEN
+    auth: useRuntimeConfig(event).REPLICATE_API_TOKEN
   })
 
   const body = await readBody(event)
@@ -40,8 +40,34 @@ export default defineEventHandler(async event => {
     safety_filter_level: 'block_only_high'
   }
 
-  const output = await replicate.run('google/nano-banana-pro', { input })
+  const config = useRuntimeConfig(event)
+  const webhookHost =
+    (typeof process !== 'undefined' && process.env?.WEBHOOK_HOST) ||
+    config.WEBHOOK_HOST
 
-  // @ts-ignore
-  return output.url()
+  const options: any = {
+    model: 'google/nano-banana-pro',
+    input
+  }
+
+  if (webhookHost) {
+    options.webhook = `${webhookHost}/api/webhooks`
+    options.webhook_events_filter = ['start', 'completed']
+  }
+
+  const prediction = await replicate.predictions.create(options)
+
+  if (prediction?.error) {
+    throw createError({
+      statusCode: 500,
+      statusMessage:
+        (prediction.error as string) || 'Failed to create prediction'
+    })
+  }
+
+  return {
+    id: prediction.id,
+    status: prediction.status,
+    createdAt: prediction.created_at
+  }
 })
