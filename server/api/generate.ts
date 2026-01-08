@@ -1,6 +1,6 @@
 import Replicate from 'replicate'
 
-const RATE_LIMIT_MAX = 3
+const RATE_LIMIT_MAX = 1
 
 function getClientIp(event: any): string {
   return (
